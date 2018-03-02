@@ -7,6 +7,10 @@ import xlwt
 import xlrd
 
 #全局变量
+Arrays_list=[['93.1.243.31','2102350BVB10H8000046','admin','Admin@storage']]
+Arrays_group_dict={}
+all_info = []
+
 
 
 # 初始化xls格式
@@ -39,85 +43,74 @@ def set_style(name, bold=False):
 
 
 # 创建excel表
-def init_excel(sheetname,all_info):
+def init_excel(Arrays_group_dict):
     # 创建xls与sheet  并写好sheet字段
     wk = xlwt.Workbook()
-    st = wk.add_sheet(sheetname, cell_overwrite_ok=True)
-    row0 = [u'主机名', u'主机IP', u'主机wwn', u'lun名称', u'lun_ID', u'lun 大小', u'lun_wwn']
-    for i in range(0, len(row0)):
-        st.write(0, i, row0[i], set_style('Times New Roman', True))
-    count=1
+    for each_array_id in Arrays_group_dict:
+        st = wk.add_sheet(each_array_id, cell_overwrite_ok=True)
+        row0 = [u'主机名', u'主机IP', u'主机wwn', u'lun名称', u'lun_ID', u'lun 大小', u'lun_wwn']
+        for i in range(0, len(row0)):
+            st.write(0, i, row0[i], set_style('Times New Roman', True))
+        count=1
 
     #开始写入数据
     # 遍历server_group，写入excel
     #print all_info
-    for each_server in all_info:
 
-        name = each_server[0]
-        ip = each_server[1]
-        wwns = each_server[2]
-        wwn_string = '\n'.join(wwns)
-        luns = []
-        luns = each_server[3]
+        all_info = Arrays_group_dict[each_array_id]
+        for each_server in all_info:
+
+            name = each_server[0]
+            ip = each_server[1]
+            wwns = each_server[2]
+            wwn_string = '\n'.join(wwns)
+            luns = []
+            luns = each_server[3]
         #print luns
-        lun_name_list = []
+            lun_name_list = []
 
-        for each1 in luns:
+            for each1 in luns:
 
-            lun_name_list.append(each1[0])
-        lun_id_string = '\n'.join(lun_name_list)
+                lun_name_list.append(each1[0])
+            lun_id_string = '\n'.join(lun_name_list)
 
-        lun_name_list = []
-        for each2 in luns:
-            lun_name_list.append(each2[1])
-        lun_name_string = '\n'.join(lun_name_list)
+            lun_name_list = []
+            for each2 in luns:
+                lun_name_list.append(each2[1])
+            lun_name_string = '\n'.join(lun_name_list)
 
-        lun_size_list = []
-        for each3 in luns:
-            lun_size_list.append(each3[2])
-        lun_size_string = '\n'.join(lun_size_list)
+            lun_size_list = []
+            for each3 in luns:
+                lun_size_list.append(each3[2])
+            lun_size_string = '\n'.join(lun_size_list)
 
-        lun_wwn_list = []
-        for each4 in luns:
-            lun_wwn_list.append(each4[3])
-        lun_wwn_string = '\n'.join(lun_wwn_list)
+            lun_wwn_list = []
+            for each4 in luns:
+                lun_wwn_list.append(each4[3])
+            lun_wwn_string = '\n'.join(lun_wwn_list)
 
-        st.write(count, 0, each_server[0], set_style('Times New Roman', 220, False))
-        st.write(count, 1, each_server[1], set_style('Times New Roman', 220, False))
-        st.write(count, 2, wwn_string, set_style('Times New Roman', 220, False))
-        st.write(count, 3, lun_name_string, set_style('Times New Roman', 220, False))
-        st.write(count, 4, lun_id_string, set_style('Times New Roman', 220, False))
-        st.write(count, 5, lun_size_string, set_style('Times New Roman', 220, False))
-        st.write(count, 6, lun_wwn_string, set_style('Times New Roman', 220, False))
+            st.write(count, 0, each_server[0], set_style('Times New Roman', 220, False))
+            st.write(count, 1, each_server[1], set_style('Times New Roman', 220, False))
+            st.write(count, 2, wwn_string, set_style('Times New Roman', 220, False))
+            st.write(count, 3, lun_name_string, set_style('Times New Roman', 220, False))
+            st.write(count, 4, lun_id_string, set_style('Times New Roman', 220, False))
+            st.write(count, 5, lun_size_string, set_style('Times New Roman', 220, False))
+            st.write(count, 6, lun_wwn_string, set_style('Times New Roman', 220, False))
 
 
-        count=count +1
+            count=count +1
 
     #结束后设置xls列宽行高
-    for row_index in range(0,count):
-        for colume_index in range(0,7):
-            cwidth = st.col(colume_index).width
-            if (len(colume_data)*367) > cwidth:
-                sheet.col((colume_index).width = (len(colume_data)*367))
-            st.write(row_index,colume_index,colume_data)
 
 
     wk.save('C:/Users/sdfh-guanc/PycharmProjects/untitled2/demo1.xls')
-
-
-
-
-
-
 
 # 先创建函数以方便url拼接
 def build_uri(urlinput, endpoint):
     return '='.join([urlinput, endpoint])
 
 
-# 通过获取的主机ID来从web中获取主机wwn和主机LUN
-
-def func():
+def func(array_ip,array_id,array_user,array_passwd):
 
     login_url = 'https://93.1.243.31:8088/deviceManager/rest/xxxxx/login'
     system_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/system/'
@@ -208,11 +201,17 @@ def func():
 
         server_group.append(server_list)
         #print server_group
+    #将盘机ID与上面的server_group做成一个字典
+    Arrays_group_dict[main_info['ID']] = server_group
+
+    return Arrays_group_dict
 
 
-    init_excel(main_info['ID'],server_group)
+
 
 if __name__ == '__main__':
-    func()
+    for each_array in Arrays_list:
+        func(each_array[0],each_array[1],each_array[2],each_array[3])
+    init_excel(Arrays_group_dict)
 
 
