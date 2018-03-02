@@ -112,15 +112,28 @@ def build_uri(urlinput, endpoint):
 
 def func(array_ip,array_id,array_user,array_passwd):
 
-    login_url = 'https://93.1.243.31:8088/deviceManager/rest/xxxxx/login'
-    system_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/system/'
-    fc_port_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/fc_initiator?PARENTID'
-    lun_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/lun/associate?TYPE=11&ASSOCIATEOBJTYPE=21&ASSOCIATEOBJID'
-    server_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/host?range=[0-100]'
-    user_agent = r'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'
+    url_head = 'https://' + array_ip + ':8088/deviceManager/rest/'
+    login_url = url_head + 'xxxxx/login'
+    system_url = url_head + array_id + '/system/'
+    fc_port_url = url_head + array_id + '/fc_initiator?PARENTID'
+    lun_url = url_head + array_id + '/lun/associate?TYPE=11&ASSOCIATEOBJTYPE=21&ASSOCIATEOBJID'
+    server_url = url_head + array_id + '/host?range=[0-100]'
+    data = {'scope': 0, 'username': array_user, 'password': array_passwd}
+
+
+
+
+
+
+    #login_url = 'https://93.1.243.31:8088/deviceManager/rest/xxxxx/login'
+    #system_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/system/'
+    #fc_port_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/fc_initiator?PARENTID'
+    #lun_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/lun/associate?TYPE=11&ASSOCIATEOBJTYPE=21&ASSOCIATEOBJID'
+    #server_url = 'https://93.1.243.31:8088/deviceManager/rest/2102350BVB10H8000046/host?range=[0-100]'
+    #user_agent = r'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko'
     context = ssl
     head = {'User-Agent': user_agent, 'Content-Type': 'application/json;charset=UTF-8'}
-    data = {'scope': 0, 'username': 'admin', 'password': 'Admin@storage'}
+    #data = {'scope': 0, 'username': 'admin', 'password': 'Admin@storage'}
     cookie = cookielib.CookieJar()
     cookie_support = urllib2.HTTPCookieProcessor(cookie)
     opener = urllib2.build_opener(cookie_support)
@@ -131,7 +144,7 @@ def func(array_ip,array_id,array_user,array_passwd):
 
     # 登陆并获取cookie中session信息，以备后用
     req = requests.post(url=login_url, headers=head,
-                        json={"scope": 0, "username": "admin", "password": "Admin@storage"}, verify=False)
+                        json={"scope": 0, "username": array_user, "password": array_passwd}, verify=False)
     print req.status_code
     session_info = requests.utils.dict_from_cookiejar(req.cookies)['session']
     iBaseToken = json.loads(req.text)['data']['iBaseToken']
