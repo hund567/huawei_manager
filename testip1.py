@@ -219,7 +219,7 @@ def func(array_ip,array_id,array_user,array_passwd):
 
     return Arrays_group_dict
 
-
+#test
 
 
 if __name__ == '__main__':
