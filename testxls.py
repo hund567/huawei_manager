@@ -13,7 +13,7 @@ def write_excel():
     for i in range(0, len(row0)):
         st.write(0, i, row0[i])
     wk.save('demo3.xls')
-    print('a')
+    print('ab')
     return
 if __name__ == '__main__':
     write_excel()

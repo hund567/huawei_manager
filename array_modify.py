@@ -31,5 +31,6 @@ def func(array_ip, array_id, iBaseToken):
             'Host':array_ip, 'Origin':'https://' + array_ip + ':8088 ', 'Upgrade-Insecure-Requests': bytes(1),
             'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate, br'}
+            #print()
 
     r = requests.post(url=upload_url, file=files, header = head, verify=False)
